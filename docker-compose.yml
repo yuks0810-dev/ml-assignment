@@ -15,3 +15,15 @@ services:
       - GRANT_SUDO=yes
     user: root
     command: start-notebook.sh --NotebookApp.token='' --NotebookApp.password='' --allow-root
+
+  python-script:
+    build: .
+    volumes:
+      - ./notebooks:/home/jovyan/work/notebooks
+      - ./data:/home/jovyan/work/data
+      - ./models:/home/jovyan/work/models
+      - ./scripts:/home/jovyan/work/scripts
+    working_dir: /home/jovyan/work
+    environment:
+      - PYTHONPATH=/home/jovyan/work
+    command: python scripts/curse_of_dimensionality_analysis.py

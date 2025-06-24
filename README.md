@@ -1,109 +1,116 @@
-# 機械学習プロジェクト環境
+# Curse of Dimensionality Analysis
 
-Kaggle風のJupyter Notebook環境をDockerで構築するプロジェクトです。
+次元の呪いと機械学習アルゴリズムの性能分析を行うプロジェクトです。
+
+## 実行方法
+
+### 1. Jupyter Notebook環境での実行
+
+```bash
+# Jupyter Lab環境を起動
+docker-compose up jupyter
+
+# http://localhost:8888 でアクセス
+# notebooks/main.ipynb を開いて実行
+```
+
+### 2. Pythonスクリプトでの実行
+
+```bash
+# Pythonスクリプトを直接実行
+docker-compose run --rm python-script
+```
+
+### 3. 個別のサービスを実行
+
+```bash
+# Jupyter環境のみ起動
+docker-compose up jupyter
+
+# バックグラウンドで起動
+docker-compose up -d jupyter
+
+# Pythonスクリプトのみ実行
+docker-compose run --rm python-script
+
+# 環境停止
+docker-compose down
+```
+
+## プロジェクト構成
+
+```
+ml-assignment/
+├── notebooks/          # Jupyter Notebooks
+│   └── main.ipynb     # メインの研究ノートブック
+├── scripts/           # Pythonスクリプト
+│   └── curse_of_dimensionality_analysis.py  # 実行可能スクリプト
+├── data/              # データセット（永続化）
+├── models/            # 保存されたモデル（永続化）
+├── Dockerfile         # ML環境のDockerイメージ
+├── docker-compose.yml # サービス構成
+└── requirements.txt   # Python依存関係
+```
+
+## 研究内容
+
+### 目的
+次元の呪いが機械学習アルゴリズムに与える影響を体系的に分析し、高次元データでのアルゴリズム選択指針を提供します。
+
+### 対象アルゴリズム
+- SVM (Support Vector Machine)
+- k-NN (k-Nearest Neighbors)
+- 混合ガウスモデル (Gaussian Mixture Model)
+- 線形回帰 (Linear Regression)
+
+### 実験設定
+- **次元数**: 10, 50, 100, 200, 500
+- **サンプル数**: 500, 1,000, 5,000
+- **データセット**: scikit-learnの合成分類データ
+
+### 分析内容
+1. **スパース性分析**: ゼロ成分比率と距離分布の可視化
+2. **性能評価**: 次元数とサンプル数による性能変化の測定
+3. **耐性分析**: アルゴリズム別の次元の呪いに対する耐性評価
+4. **実用ガイドライン**: サンプル/次元比率の推奨事項
+
+## 出力結果
+
+実行後、以下のファイルが生成されます：
+
+- `data/experiment_results.csv` - 実験結果データ
+- `data/comprehensive_summary.txt` - 包括的分析レポート
+- `models/sparsity_analysis.png` - スパース性分析図
+- `models/performance_analysis.png` - 性能分析図
+- `models/resistance_analysis.png` - 耐性分析図
+
+## 主要な発見
+
+1. **次元の呪いの確認**: 高次元では距離の変動係数が大幅に減少
+2. **アルゴリズム別耐性**: 混合ガウスモデルが最も高い次元耐性を示す
+3. **データ効率**: 良好な性能には最低50サンプル/次元の比率が必要
+4. **実用的推奨**: 用途別の最適アルゴリズム選択指針を提供
+
+## 推奨事項
+
+- **高次元データ**: 混合ガウスモデル
+- **少データ**: SVM
+- **安定性重視**: 混合ガウスモデル
+- **総合最優秀**: 混合ガウスモデル
 
 ## 環境構成
 
 - **ベースイメージ**: `jupyter/datascience-notebook`
-- **Python**: 最新版
 - **主要ライブラリ**: TensorFlow, PyTorch, scikit-learn, XGBoost, LightGBM, CatBoost
 - **実験管理**: MLflow, Weights & Biases
 - **ハイパーパラメータ最適化**: Optuna
 - **可視化**: matplotlib, seaborn, plotly
 
-## セットアップ
+## 環境要件
 
-### 前提条件
-
-- Docker
-- Docker Compose
-
-### 環境構築
-
-1. リポジトリをクローン
-```bash
-git clone <repository-url>
-cd ml-assignment
-```
-
-2. 必要なディレクトリを作成
-```bash
-mkdir -p notebooks data models scripts
-```
-
-3. Dockerコンテナをビルド・起動
-```bash
-docker-compose up --build
-```
-
-## 使い方
-
-### Jupyter Labへのアクセス
-
-コンテナ起動後、ブラウザで以下のURLにアクセス:
-```
-http://localhost:8888
-```
-
-### ディレクトリ構成
-
-```
-ml-assignment/
-├── notebooks/     # Jupyter Notebookファイル
-├── data/         # データセット
-├── models/       # 保存済みモデル
-├── scripts/      # Pythonスクリプト
-├── Dockerfile
-├── docker-compose.yml
-├── requirements.txt
-└── README.md
-```
-
-### 主要な機能
-
-1. **機械学習モデリング**
-   - scikit-learn, TensorFlow, PyTorchを使用
-   - XGBoost, LightGBM, CatBoostによる勾配ブースティング
-
-2. **データ可視化**
-   - matplotlib, seaborn, plotlyによる高品質な可視化
-   - インタラクティブなグラフ作成
-
-3. **ハイパーパラメータ最適化**
-   - Optunaを使用した効率的な最適化
-
-4. **実験管理**
-   - MLflowによるモデル・メトリクス管理
-   - Weights & Biasesによる実験追跡
-
-5. **モデル解釈**
-   - SHAP, LIMEによる予測説明
-
-### コンテナの操作
-
-```bash
-# コンテナ起動
-docker-compose up
-
-# コンテナ停止
-docker-compose down
-
-# バックグラウンドで起動
-docker-compose up -d
-
-# ログ確認
-docker-compose logs jupyter
-```
-
-### データの配置
-
-- データセットは `data/` フォルダに配置
-- ホスト側のファイルがコンテナ内に自動同期されます
-
-### モデルの保存
-
-- 訓練済みモデルは `models/` フォルダに保存
-- pickleやjoblibを使用した保存が推奨
+- Docker & Docker Compose
+- 8GB以上のRAM推奨
+- ポート8888が利用可能であること
 
 ## トラブルシューティング
 
@@ -119,12 +126,6 @@ ports:
 
 1. `requirements.txt` に追加
 2. コンテナを再ビルド: `docker-compose up --build`
-
-### Kaggle APIの使用
-
-1. Kaggle APIトークンを取得
-2. `notebooks/` フォルダに `kaggle.json` を配置
-3. Notebook内でKaggleデータセットをダウンロード可能
 
 ## 注意事項
 
